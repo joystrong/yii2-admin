@@ -1,48 +1,35 @@
 <?php
+
 namespace common\models;
 
 use Yii;
-use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * User model
+ * This is the model class for table "auth_user".
  *
  * @property integer $id
  * @property string $username
+ * @property string $auth_key
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
- * @property string $auth_key
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $password write-only password
+ * @property integer $role
+ * @property string $created_at
+ * @property string $updated_at
  */
-class User extends BaseModel  implements IdentityInterface
+class AuthUser extends BaseModel  implements IdentityInterface
 {
+    public $password;
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
-
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%user}}';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::className(),
-        ];
+        return 'auth_user';
     }
 
     /**
@@ -51,8 +38,34 @@ class User extends BaseModel  implements IdentityInterface
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['username', 'auth_key', 'password_hash', 'email'], 'required'],
+            [['status', 'role', 'created_at', 'updated_at'], 'integer'],
+            [['username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            [['username'], 'unique'],
+            [['email'], 'unique'],
+            [['mobile'],'unique'],
+            [['password_reset_token'], 'unique'],
+            ['password', 'required'],
+            ['password', 'string', 'min' => 6],
+            ['mobile','string','min'=>11,'max'=>11],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'username' => Yii::t('app', '用户名'),
+            'email' => Yii::t('app', '邮箱'),
+            'status' => Yii::t('app', '状态'),
+            'role' => Yii::t('app', '角色等级'),
+            'mobile'=>Yii::t('app', '手机号'),
+            'created_at' => Yii::t('app', '创建时间'),
+            'updated_at' => Yii::t('app', '更新时间'),
         ];
     }
 

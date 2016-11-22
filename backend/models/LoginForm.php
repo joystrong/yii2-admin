@@ -1,14 +1,16 @@
 <?php
-namespace common\models;
+namespace backend\models;
 
 use Yii;
 use yii\base\Model;
+use common\models\AuthUser;
 
 /**
  * Login form
  */
 class LoginForm extends Model
 {
+    public $mobile;
     public $username;
     public $password;
     public $rememberMe = false;
@@ -70,9 +72,9 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            //$this->_user = AuthUser::findByUsername($this->username);
+            $this->_user = AuthUser::find()->where(['status' => self::STATUS_ACTIVE])->andFilterWhere(['or','username'=>$this->username,'mobile'=>$this->mobile]);
         }
-
         return $this->_user;
     }
 }
