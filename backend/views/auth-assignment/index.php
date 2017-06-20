@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use mdm\admin\components\Helper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\AuthAssignmentSearch */
@@ -16,7 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Auth Assignment', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php
+        if(Helper::checkRoute('create'))
+            echo Html::a('Create Auth Assignment', ['create'], ['class' => 'btn btn-success']);
+        ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -28,7 +32,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'user_id',
             'created_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template'=>Helper::filterActionColumn('{view}{update}{delete}'),
+            ],
         ],
     ]); ?>
 </div>

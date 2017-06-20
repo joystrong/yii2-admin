@@ -34,6 +34,20 @@ class LoginForm extends Model
     }
 
     /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'username' => Yii::t('app', '账户'),
+            'password' => Yii::t('app', '密码'),
+            'rememberMe'=>Yii::t('app','记住我'),
+        ];
+    }
+
+
+
+    /**
      * Validates the password.
      * This method serves as the inline validation for password.
      *
@@ -72,8 +86,7 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            //$this->_user = AuthUser::findByUsername($this->username);
-            $this->_user = AuthUser::find()->where(['status' => self::STATUS_ACTIVE])->andFilterWhere(['or','username'=>$this->username,'mobile'=>$this->mobile]);
+            $this->_user = AuthUser::find()->where(['status' => AuthUser::STATUS_ACTIVE])->andFilterWhere(['or',['username'=>$this->username],['mobile'=>$this->mobile]])->one();
         }
         return $this->_user;
     }

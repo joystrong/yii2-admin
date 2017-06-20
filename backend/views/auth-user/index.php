@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use mdm\admin\components\Helper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\AuthUserSearch */
@@ -16,7 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('添加后台用户', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php
+        if(Helper::checkRoute('create'))
+            echo Html::a('添加后台用户', ['create'], ['class' => 'btn btn-success']);
+        ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -36,7 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'created_at',
             // 'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template'=>Helper::filterActionColumn('{view}{update}{delete}'),
+            ],
         ],
     ]); ?>
 </div>

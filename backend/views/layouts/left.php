@@ -25,11 +25,27 @@
             </div>
         </form>
         <!-- /.search form -->
-        <?=
-        \dmstr\widgets\Menu::widget([
+        <?php
+        $callback = function ($menu){
+            $data = json_decode($menu['data'],true);
+            $items = $menu['children'];
+            $return = [
+                'label'=>$menu['name'],
+                'url'=>[$menu['route']]
+            ];
+            if($data){
+                isset($data['visible']) && $return['visible'] = $data['visible'];
+                isset($data['icon']) && $data['icon'] && $return['icon'] = $data['icon'];
+                $return['options'] = $data;
+            }
+            (!isset($return['icon']) || $return['icon']) && $return['icon'] = 'fa fa-circle-o';
+            $items && $return['items'] = $items;
+            return $return;
+        };
+        echo \backend\components\Menu::widget([
             //'encodeLabels'=>false,
             'options'=>['class'=>'sidebar-menu'],
-            'items'=>\mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id)
+            'items'=>\mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id,null,$callback)
         ])
         ?>
 
